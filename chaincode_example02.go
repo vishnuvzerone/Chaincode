@@ -23,121 +23,94 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-type ChaincodeExample struct {
+
+// SimpleChaincode example simple Chaincode implementation
+type SimpleChaincode struct {
 }
 
-// Called to initialize the chaincode
-func (t *ChaincodeExample) Init(stub shim.ChaincodeStubInterface, param *appinit.Init) error {
-
-	var err error
-
-	fmt.Printf("Aval = %d, Bval = %d\n", param.PartyA.Value, param.PartyB.Value)
-
-	// Write the state to the ledger
-	err = t.PutState(stub, param.PartyA)
+func main() {
+	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
-		return err
+		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
-
-	err = t.PutState(stub, param.PartyB)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
-// Transaction makes payment of X units from A to B
-func (t *ChaincodeExample) MakePayment(stub shim.ChaincodeStubInterface, param *example02.PaymentParams) error {
-
-	var err error
-
-	// Get the state from the ledger
-	src, err := t.GetState(stub, param.PartySrc)
-	if err != nil {
-		return err
+// Init resets all the things
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	dst, err := t.GetState(stub, param.PartyDst)
-	if err != nil {
-		return err
-	}
-
-	// Perform the execution
-	X := int(param.Amount)
-	src = src - X
-	dst = dst + X
-	fmt.Printf("Aval = %d, Bval = %d\n", src, dst)
-
-	// Write the state back to the ledger
-	err = stub.PutState(param.PartySrc, []byte(strconv.Itoa(src)))
-	if err != nil {
-		return err
-	}
-
-	err = stub.PutState(param.PartyDst, []byte(strconv.Itoa(dst)))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Deletes an entity from state
-func (t *ChaincodeExample) DeleteAccount(stub shim.ChaincodeStubInterface, param *example02.Entity) error {
-
-	// Delete the key from the state in ledger
-	err := stub.DelState(param.Id)
-	if err != nil {
-		return errors.New("Failed to delete state")
-	}
-
-	return nil
-}
-
-// Query callback representing the query of a chaincode
-func (t *ChaincodeExample) CheckBalance(stub shim.ChaincodeStubInterface, param *example02.Entity) (*example02.BalanceResult, error) {
-	var err error
-
-	// Get the state from the ledger
-	val, err := t.GetState(stub, param.Id)
+	err := stub.PutState("hello_world", []byte(args[0]))
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("Query Response: %d\n", val)
-	return &example02.BalanceResult{Balance: *proto.Int32(int32(val))}, nil
+	return nil, nil
 }
 
-func main() {
-	self := &ChaincodeExample{}
-	interfaces := ccs.Interfaces{
-		"org.hyperledger.chaincode.example02": self,
-		"appinit": self,
+// Invoke isur entry point to invoke a chaincode function
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	fmt.Println("invoke is running " + function)
+
+	// Handle different functions
+	if function == "init" {
+		return t.Init(stub, "init", args)
+	} else if function == "write" {
+		return t.write(stub, args)
+	}
+	fmt.Println("invoke did not find func: " + function)
+
+	return nil, errors.New("Received unknown function invocation: " + function)
+}
+
+// Query is our entry point for queries
+func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	fmt.Println("query is running " + function)
+
+	// Handle different functions
+	if function == "read" { //read a variable
+		return t.read(stub, args)
+	}
+	fmt.Println("query did not find func: " + function)
+
+	return nil, errors.New("Received unknown function query: " + function)
+}
+
+// write - invoke function to write key/value pair
+func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, value string
+	var err error
+	fmt.Println("running write()")
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
 	}
 
-	err := ccs.Start(interfaces) // Our one instance implements both Transactions and Queries interfaces
+	key = args[0] //rename for funsies
+	value = args[1]
+	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
 	if err != nil {
-		fmt.Printf("Error starting example chaincode: %s", err)
+		return nil, err
 	}
+	return nil, nil
 }
 
-//-------------------------------------------------
-// Helpers
-//-------------------------------------------------
-func (t *ChaincodeExample) PutState(stub shim.ChaincodeStubInterface, party *appinit.Party) error {
-	return stub.PutState(party.Entity, []byte(strconv.Itoa(int(party.Value))))
-}
+// read - query function to read key/value pair
+func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, jsonResp string
+	var err error
 
-func (t *ChaincodeExample) GetState(stub shim.ChaincodeStubInterface, entity string) (int, error) {
-	bytes, err := stub.GetState(entity)
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+	}
+
+	key = args[0]
+	valAsbytes, err := stub.GetState(key)
 	if err != nil {
-		return 0, errors.New("Failed to get state")
-	}
-	if bytes == nil {
-		return 0, errors.New("Entity not found")
+		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+		return nil, errors.New(jsonResp)
 	}
 
-	val, _ := strconv.Atoi(string(bytes))
-	return val, nil
+	return valAsbytes, nil
 }
