@@ -19,9 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
