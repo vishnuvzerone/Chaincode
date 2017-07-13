@@ -25,7 +25,7 @@ import (
 type User struct {
 	Name            string `json:"name"`
 	Role            string `json:"role"`
-	BlockID         string `json:"reg"`
+	PropertyID         string `json:"propertyid"`
 }
 
 // SimpleChaincode example simple Chaincode implementation
@@ -105,7 +105,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 }
 
 func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, name, role, blockid string
+	var key, name, role, propertyid string
 	var err error
 	var valAsbytes []byte
 	fmt.Println("running write()")
@@ -114,9 +114,9 @@ func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []strin
 
 	name         = "\"Name\":\""+args[1]+"\", "							// Variables to define the JSON
 	role         = "\"Role\":\""+args[2]+"\", "
-	blockid      = "\"BlockID\":\""+args[3]+"\" "
+	propertyid      = "\"PropertyID\":\""+args[3]+"\" "
 
-	user_json := "{"+name+role+blockid+"}" 
+	user_json := "{"+name+role+propertyid+"}" 
 	err = json.Unmarshal([]byte(user_json), &usr)	
 	valAsbytes, err = json.Marshal(usr)
 	if len(args) != 4 {
