@@ -271,6 +271,8 @@ func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface,
 			err = stub.PutState(_registerBlockID, valAsbytes) //Updating the will to iniitial register
   			err = stub.PutState(_depatmentBlockID, valAsbytes) //Updating the will to department register
 		}
+	}else{
+		return valAsbytes, err
 	}
 	
 	if err != nil {
