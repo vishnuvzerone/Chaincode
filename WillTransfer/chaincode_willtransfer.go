@@ -310,8 +310,8 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn = "WillPaperID: " + wPaper.ID
-		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo
+		wPaperToReturn = "WillPaperID: " + wPaper.ID + " || "
+		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo + " || "
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
