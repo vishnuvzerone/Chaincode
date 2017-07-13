@@ -21,6 +21,13 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+
+type User struct {
+	Name            string 'json:"name"'
+	Role            string 'json:"role"'
+	BlockID         string 'json:"reg"'
+}
+
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
@@ -56,6 +63,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	} else if function == "write" {
 		return t.write(stub, args)
 	}
+	else if function == "adduser" {
+		return t.AddUser(stub, args)
+	}
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation: " + function)
@@ -87,12 +97,42 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
 	key = args[0] //rename for funsies
 	value = args[1]
-	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+	err = stub.PutState(key, valAsbytes) //write the variable into the chaincode state
 	if err != nil {
 		return nil, err
 	}
 	return nil, nil
 	return valAsbytes, nil
+}
+
+func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, name, role, blockid string
+	var err error
+	var valAsbytes []byte
+	fmt.Println("running write()")
+	
+	var usr User
+
+	name         = "\"Name\":\""+args[1]+"\", "							// Variables to define the JSON
+	role         = "\"Role\":\""+args[2]+"\", "
+	blockid      = "\"BlockID\":\""args[3]"\" "
+	
+
+	user_json := "{"+name+role+blockid+"}" 
+	err = json.Unmarshal([]byte(user_json), &usr)	
+	valAsbytes, err = json.Marshal(usr)
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+	}
+
+	key = args[0] //rename for funsies
+	//value = args[1]
+	err = stub.PutState(key, valAsbytes) //write the variable into the chaincode state
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+	//return valAsbytes, nil
 }
 
 // read - query function to read key/value pair
