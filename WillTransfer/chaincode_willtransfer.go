@@ -24,24 +24,24 @@ import (
 
 const _propertyID = "property1"
 const _registerBlockID = "willRegister"
-const _depatmentBlockID = "property1"
+const _depatmentBlockID = "department1"
 const _adminUserName = "admin"
 const _adminPassword = "admin123"
 const _departmentUserName = "department1"
 const _departmentPassword = "department123"
 
 type User struct {
-	Name            string `json:"name"`
-	Password            string `json:"password"`
-	PropertyID         string `json:"propertyid"`
-	Info         string `json:"info"`
+	Name            	string `json:"name"`
+	Password            	string `json:"password"`
+	PropertyID         	string `json:"propertyid"`
+	Info         		string `json:"info"`
 }
 
 type WillPaper struct {
-	ID            string `json:"id"`
-	VisibleInfo            string `json:"visibleinfo"`
-	HiddenInfo         string `json:"hiddeninfo"`
-	IsLocked         bool `json:"islocked"`
+	ID            		string `json:"id"`
+	VisibleInfo             string `json:"visibleinfo"`
+	HiddenInfo         	string `json:"hiddeninfo"`
+	IsLocked         	bool `json:"islocked"`
 }
 
 // SimpleChaincode example simple Chaincode implementation
@@ -101,7 +101,10 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.read(stub, args)
 	}else if function == "readusername" {
 		return t.ReadUserName(stub, args)
+	}else if function == "viewWillinfobyproperty" {
+		return t.ViewWillInfoByProperty(stub, args)
 	}
+	
 	fmt.Println("query did not find func: " + function)
 
 	return nil, errors.New("Received unknown function query: " + function)
@@ -280,6 +283,49 @@ func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface,
 	}
 	return []byte("successfully Unlocked"), nil
 	//return valAsbytes, nil
+}
+
+// 
+// ViewWillInfoByProperty - Read the will paper information from the block and display if not locked
+// 
+func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var willID, departmentUserName, departmentPassword string
+	var err error
+	
+	var wPaper WillPaper
+	var wPaperToReturn WillPaper
+	
+	if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+	}
+
+	willID = args[0]
+	departmentUserName = args[1]
+	departmentPassword = args[2]
+	
+	if departmentUserName == _departmentUserName &&
+	departmentPassword == _departmentPassword {
+		valAsbytes, err := stub.GetState(_depatmentBlockID)
+		err = json.Unmarshal(valAsbytes, &wPaper)
+		if err != nil{
+			return nil, errors.New("Exception have been occured")
+		}
+		wPaperToReturn.ID = wPaper.ID
+		wPaperToReturn.VisibleInfo = wPaper.VisibleInfo
+		
+		if wPaper.ID == willID $$ wPaper.IsLocked == false{
+			wPaperToReturn.HiddenInfo = wPaper.HiddenInfo 
+		}
+	}
+	
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	
+	valbytes, err := json.Marshal(wPaperToReturn)	
+
+	return valbytes, nil
 }
 
 
