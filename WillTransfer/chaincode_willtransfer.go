@@ -217,8 +217,8 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 	var wPaper WillPaper
 
 	id         = "\"ID\":\""+args[0]+"\", "							// Variables to define the JSON
-	hiddeninfo         = "\"HiddenInfo\":\""+args[1]+"\", "
-	visibleinfo      = "\"VisibleInfo\":\""+args[2]+"\" "
+	visibleinfo      = "\"VisibleInfo\":\""+args[1]+"\" "
+	hiddeninfo         = "\"HiddenInfo\":\""+args[2]+"\", "
 
 	wPaper_json := "{"+id+hiddeninfo+visibleinfo+"}" 
 	err = json.Unmarshal([]byte(wPaper_json), &wPaper)	
