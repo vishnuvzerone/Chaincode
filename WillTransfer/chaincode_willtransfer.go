@@ -208,8 +208,7 @@ func (t *SimpleChaincode) ReadUserName(stub shim.ChaincodeStubInterface, args []
 // CreateWillPaper - Creating new will paper
 // 
 func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var id, hiddeninfo, visibleinfo string
-	var islocked bool
+	var id, hiddeninfo, visibleinfo, islocked string
 	var err error
 	var valAsbytes []byte
   
