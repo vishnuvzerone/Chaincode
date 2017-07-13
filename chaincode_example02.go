@@ -78,6 +78,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, value string
 	var err error
+	var valAsbytes []byte
 	fmt.Println("running write()")
 	valAsbytes, err := json.Marshal(args[1])
 	if len(args) != 2 {
