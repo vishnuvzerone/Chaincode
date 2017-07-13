@@ -92,6 +92,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 		return nil, err
 	}
 	return nil, nil
+	return nil, valAsbytes
 }
 
 // read - query function to read key/value pair
