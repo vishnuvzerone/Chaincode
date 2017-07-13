@@ -41,6 +41,7 @@ type WillPaper struct {
 	ID            string `json:"id"`
 	VisibleInfo            string `json:"visibleinfo"`
 	HiddenInfo         string `json:"hiddeninfo"`
+	IsLocked         bool `json:"islocked"`
 }
 
 // SimpleChaincode example simple Chaincode implementation
@@ -82,7 +83,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.AddUser(stub, args)
 	} else if function == "createwillpaper" {
 		return t.CreateWillPaper(stub, args)
+	} else if function == "unlockthewillbyadmin" {
+		return t.UnlockTheWillByAdmin(stub, args)
 	} 
+
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation: " + function)
@@ -217,8 +221,9 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 	var wPaper WillPaper
 
 	id         = "\"ID\":\""+args[0]+"\", "							// Variables to define the JSON
-	visibleinfo      = "\"VisibleInfo\":\""+args[1]+"\" "
+	visibleinfo      = "\"VisibleInfo\":\""+args[1]+"\", "
 	hiddeninfo         = "\"HiddenInfo\":\""+args[2]+"\", "
+	islocked         = "\"IsLocked\": true"
 
 	wPaper_json := "{"+id+hiddeninfo+visibleinfo+"}" 
 	err = json.Unmarshal([]byte(wPaper_json), &wPaper)	
@@ -232,6 +237,45 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 		return nil, err
 	}
 	return nil, nil
+	//return valAsbytes, nil
+}
+
+
+// 
+// CreateWillPaper - Creating new will paper
+// 
+func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var willID, adminUserName, adminPassword string
+	var err error
+	var valAsbytes []byte
+  
+  if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3 arguments")
+	}
+  
+	fmt.Println("start to create a will paper")
+	
+	var wPaper WillPaper
+
+	willID = args[0]
+	adminUserName = args[1]
+	adminPassword = args[2]
+	
+	if adminUserName == _adminUserName && 
+	adminPassword == _adminPassword		{
+		valAsbytes, err := stub.GetState(_registerBlockID)
+		err = json.Unmarshal(valAsbytes, &wPaper)
+		if willID == wPaper.ID && wPaper.IsLocked == true{
+			wPaper.IsLocked = false
+			err = stub.PutState(_registerBlockID, wPaper) //Updating the will to iniitial register
+  			err = stub.PutState(_depatmentBlockID, wPaper) //Updating the will to department register
+		}
+	}
+	
+	if err != nil {
+		return nil, err
+	}
+	return "successfully Unlocked", nil
 	//return valAsbytes, nil
 }
 
