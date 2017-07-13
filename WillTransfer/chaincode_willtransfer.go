@@ -263,7 +263,7 @@ func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface,
 	
 	if adminUserName == _adminUserName && 
 	adminPassword == _adminPassword		{
-		valAsbytes, err := stub.GetState(_registerBlockID)
+		valAsbytes, err = stub.GetState(_registerBlockID)
 		err = json.Unmarshal(valAsbytes, &wPaper)
 		if willID == wPaper.ID && wPaper.IsLocked == true{
 			wPaper.IsLocked = false
