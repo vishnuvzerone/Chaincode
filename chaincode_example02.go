@@ -62,8 +62,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write(stub, args)
-	}
-	else if function == "adduser" {
+	} else if function == "adduser" {
 		return t.AddUser(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)
@@ -115,8 +114,7 @@ func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []strin
 
 	name         = "\"Name\":\""+args[1]+"\", "							// Variables to define the JSON
 	role         = "\"Role\":\""+args[2]+"\", "
-	blockid      = "\"BlockID\":\""args[3]"\" "
-	
+	blockid      = "\"BlockID\":\""+args[3]+"\" "
 
 	user_json := "{"+name+role+blockid+"}" 
 	err = json.Unmarshal([]byte(user_json), &usr)	
