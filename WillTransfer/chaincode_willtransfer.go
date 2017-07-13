@@ -80,7 +80,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.write(stub, args)
 	} else if function == "adduser" {
 		return t.AddUser(stub, args)
-	}
+	} else if function == "createwillpaper" {
+		return t.CreateWillPaper(stub, args)
+	} 
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation: " + function)
@@ -198,6 +200,9 @@ func (t *SimpleChaincode) ReadUserName(stub shim.ChaincodeStubInterface, args []
 	return []byte(usr.Name), nil
 }
 
+// 
+// CreateWillPaper - Creating new will paper
+// 
 func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var id, hiddeninfo, visibleinfo string
 	var err error
