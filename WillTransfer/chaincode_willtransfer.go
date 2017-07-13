@@ -313,7 +313,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		wPaperToReturn.ID = wPaper.ID
 		wPaperToReturn.VisibleInfo = wPaper.VisibleInfo
 		
-		if wPaper.ID == willID $$ wPaper.IsLocked == false{
+		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn.HiddenInfo = wPaper.HiddenInfo 
 		}
 	}
