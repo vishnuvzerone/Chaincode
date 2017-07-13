@@ -209,6 +209,7 @@ func (t *SimpleChaincode) ReadUserName(stub shim.ChaincodeStubInterface, args []
 // 
 func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var id, hiddeninfo, visibleinfo string
+	var islocked bool
 	var err error
 	var valAsbytes []byte
   
@@ -242,7 +243,7 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 
 
 // 
-// CreateWillPaper - Creating new will paper
+// UnlockTheWillByAdmin - Creating new will paper
 // 
 func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var willID, adminUserName, adminPassword string
@@ -267,15 +268,16 @@ func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface,
 		err = json.Unmarshal(valAsbytes, &wPaper)
 		if willID == wPaper.ID && wPaper.IsLocked == true{
 			wPaper.IsLocked = false
-			err = stub.PutState(_registerBlockID, wPaper) //Updating the will to iniitial register
-  			err = stub.PutState(_depatmentBlockID, wPaper) //Updating the will to department register
+			valAsbytes, err = json.Marshal(wPaper)	
+			err = stub.PutState(_registerBlockID, valAsbytes) //Updating the will to iniitial register
+  			err = stub.PutState(_depatmentBlockID, valAsbytes) //Updating the will to department register
 		}
 	}
 	
 	if err != nil {
 		return nil, err
 	}
-	return "successfully Unlocked", nil
+	return []byte("successfully Unlocked"), nil
 	//return valAsbytes, nil
 }
 
