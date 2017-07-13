@@ -51,7 +51,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	}
 
 	err := stub.PutState("register", []byte(args[0]))
-	err := stub.PutState("property1", []byte(args[0]))
+	err = stub.PutState("property1", []byte(args[0]))
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (t *SimpleChaincode) ReadUserName(stub shim.ChaincodeStubInterface, args []
 	
 	err = json.Unmarshal(valAsbytes, &usr)
 
-	return usr.Name, nil
+	return []byte(usr.Name), nil
 }
 
 // read - query function to read key/value pair
