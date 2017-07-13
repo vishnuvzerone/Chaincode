@@ -24,9 +24,14 @@ import (
 
 type User struct {
 	Name            string `json:"name"`
-	Role            string `json:"role"`
+	Password            string `json:"password"`
 	PropertyID         string `json:"propertyid"`
+	Info         string `json:"info"`
 }
+
+const _propertyID = "property1"
+const _adminUserName = "admin"
+const _adminPassword = "adminpass1"
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
@@ -46,6 +51,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	}
 
 	err := stub.PutState("register", []byte(args[0]))
+	err := stub.PutState("property1", []byte(args[0]))
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +111,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 }
 
 func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, name, role, propertyid string
+	var key, name, password, propertyid, info string
 	var err error
 	var valAsbytes []byte
 	fmt.Println("running write()")
@@ -113,10 +119,11 @@ func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []strin
 	var usr User
 
 	name         = "\"Name\":\""+args[1]+"\", "							// Variables to define the JSON
-	role         = "\"Role\":\""+args[2]+"\", "
-	propertyid      = "\"PropertyID\":\""+args[3]+"\" "
+	password         = "\"Password\":\""+args[2]+"\", "
+	propertyid      = "\"PropertyID\":\""+_propertyID+"\", "
+	info	= "\"PropertyID\":\""+args[3]+"\" "
 
-	user_json := "{"+name+role+propertyid+"}" 
+	user_json := "{"+name+password+propertyid+info+"}" 
 	err = json.Unmarshal([]byte(user_json), &usr)	
 	valAsbytes, err = json.Marshal(usr)
 	if len(args) != 4 {
@@ -131,6 +138,28 @@ func (t *SimpleChaincode) AddUser(stub shim.ChaincodeStubInterface, args []strin
 	}
 	return nil, nil
 	//return valAsbytes, nil
+}
+
+func (t *SimpleChaincode) ReadUserName(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, jsonResp string
+	var err error
+	
+	var usr User
+	
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+	}
+
+	key = args[0]
+	valAsbytes, err := stub.GetState(key)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	
+	err = json.Unmarshal(valAsbytes, &usr)
+
+	return usr.Name, nil
 }
 
 // read - query function to read key/value pair
