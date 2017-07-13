@@ -23,9 +23,9 @@ import (
 
 
 type User struct {
-	Name            string 'json:"name"'
-	Role            string 'json:"role"'
-	BlockID         string 'json:"reg"'
+	Name            string `json:"name"`
+	Role            string `json:"role"`
+	BlockID         string `json:"reg"`
 }
 
 // SimpleChaincode example simple Chaincode implementation
