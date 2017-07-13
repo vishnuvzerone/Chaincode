@@ -80,7 +80,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	var err error
 	var valAsbytes []byte
 	fmt.Println("running write()")
-	valAsbytes, err := json.Marshal(args[1])
+	valAsbytes, err = json.Marshal(args[1])
 	if len(args) != 2 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
 	}
