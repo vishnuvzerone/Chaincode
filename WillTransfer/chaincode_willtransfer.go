@@ -293,7 +293,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 	var err error
 	
 	var wPaper WillPaper
-	var wPaperToReturn WillPaper
+	var wPaperToReturn string
 	
 	if len(args) != 3 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
@@ -310,11 +310,11 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn.ID = wPaper.ID
-		wPaperToReturn.VisibleInfo = wPaper.VisibleInfo
+		wPaperToReturn = "WillPaperID: " + wPaper.ID
+		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
-			wPaperToReturn.HiddenInfo = wPaper.HiddenInfo 
+			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
 		}
 	}
 	
@@ -323,9 +323,9 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		return nil, errors.New(jsonResp)
 	}
 	
-	valbytes, err := json.Marshal(wPaperToReturn)	
+	//valbytes, err := json.Marshal(wPaperToReturn)	
 
-	return valbytes, nil
+	return []byte(wPaperToReturn), nil
 }
 
 
