@@ -322,9 +322,9 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
 		}
-	}else if department2UserName == _departmentUserName &&
-	department2Password == _departmentPassword{
-		valAsbytes, err = stub.GetState(_depatment2BlockID)
+	}else if departmentUserName == _department2UserName &&
+	departmentPassword == _department2Password{
+		valAsbytes, err := stub.GetState(_depatment2BlockID)
 		err = json.Unmarshal(valAsbytes, &wPaper)
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
