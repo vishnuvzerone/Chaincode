@@ -300,7 +300,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 	
 	var wPaper WillPaper
 	var wPaperToReturn string
-	
+	wPaperToReturn = "null"
 	if len(args) != 3 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
 	}
