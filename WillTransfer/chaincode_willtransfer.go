@@ -24,11 +24,14 @@ import (
 
 const _propertyID = "property1"
 const _registerBlockID = "willRegister"
-const _depatmentBlockID = "department1"
+const _depatmentBlockID = "Land"
+const _depatment2BlockID = "Vehicle"
 const _adminUserName = "admin"
 const _adminPassword = "admin123"
-const _departmentUserName = "department1"
-const _departmentPassword = "department123"
+const _departmentUserName = "landdepartment"
+const _departmentPassword = "land123"
+const _department2UserName = "vehicledepartment"
+const _department2Password = "vehicle123"
 
 type User struct {
 	Name            	string `json:"name"`
@@ -63,6 +66,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	err := stub.PutState(_registerBlockID, []byte(args[0]))
 	err = stub.PutState(_depatmentBlockID, []byte(args[0]))
+	err = stub.PutState(_depatment2BlockID, []byte(args[0]))
 	if err != nil {
 		return nil, err
 	}
@@ -223,10 +227,10 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 	
 	var wPaper WillPaper
 
-	id         = "\"ID\":\""+args[0]+"\", "							// Variables to define the JSON
-	visibleinfo      = "\"VisibleInfo\":\""+args[1]+"\", "
-	hiddeninfo         = "\"HiddenInfo\":\""+args[2]+"\", "
-	islocked         = "\"IsLocked\": true"
+	id         	= "\"ID\":\""+args[0]+"\", "							// Variables to define the JSON
+	visibleinfo     = "\"VisibleInfo\":\""+args[1]+"\", "
+	hiddeninfo      = "\"HiddenInfo\":\""+args[2]+"\", "
+	islocked        = "\"IsLocked\": true"
 
 	wPaper_json := "{"+id+hiddeninfo+visibleinfo+islocked+"}" 
 	err = json.Unmarshal([]byte(wPaper_json), &wPaper)	
@@ -235,7 +239,8 @@ func (t *SimpleChaincode) CreateWillPaper(stub shim.ChaincodeStubInterface, args
 	//key = args[0] //rename for funsies
 	//value = args[1]
 	err = stub.PutState(_registerBlockID, valAsbytes) //write the will to iniitial register
-  err = stub.PutState(_depatmentBlockID, valAsbytes) //Write the will to department register
+  	err = stub.PutState(_depatmentBlockID, valAsbytes) //Write the will to department register
+	err = stub.PutState(_depatment2BlockID, valAsbytes) //Write the will to department2 register
 	if err != nil {
 		return nil, err
 	}
@@ -273,6 +278,7 @@ func (t *SimpleChaincode) UnlockTheWillByAdmin(stub shim.ChaincodeStubInterface,
 			valAsbytes, err = json.Marshal(wPaper)	
 			err = stub.PutState(_registerBlockID, valAsbytes) //Updating the will to iniitial register
   			err = stub.PutState(_depatmentBlockID, valAsbytes) //Updating the will to department register
+			err = stub.PutState(_depatment2BlockID, valAsbytes) //Updating the will to department2 register
 		}
 	}else{
 		return valAsbytes, err
@@ -305,7 +311,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 	
 	if departmentUserName == _departmentUserName &&
 	departmentPassword == _departmentPassword {
-		valAsbytes, err := stub.GetState(_depatmentBlockID)
+		valAsbytes, err = stub.GetState(_depatmentBlockID)
 		err = json.Unmarshal(valAsbytes, &wPaper)
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
@@ -316,7 +322,24 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
 		}
+	}else if department2UserName == _departmentUserName &&
+	department2Password == _departmentPassword{
+		valAsbytes, err = stub.GetState(_depatment2BlockID)
+		err = json.Unmarshal(valAsbytes, &wPaper)
+		if err != nil{
+			return nil, errors.New("Exception have been occured")
+		}
+		wPaperToReturn = "WillPaperID: " + wPaper.ID + " || "
+		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo + " || "
+		
+		if wPaper.ID == willID && wPaper.IsLocked == false{
+			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
+		}
+	}else {
+		wPaperToReturn = "Invalid Username or Password"
 	}
+	
+	
 	
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get state for " + willID + "\"}"
