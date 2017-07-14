@@ -316,15 +316,17 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn = wPaper.ID + "||"
-		wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
-		
-		if wPaper.ID == willID && wPaper.IsLocked == false{
-			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo  + "||"
-			wPaperToReturn = wPaperToReturn + "false"
-		}else{
-			wPaperToReturn = wPaperToReturn + "" + "||"
-			wPaperToReturn = wPaperToReturn + "true"
+		if wPaper.ID == willID {
+			wPaperToReturn = wPaper.ID + "||"
+			wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
+
+			if wPaper.IsLocked == false{
+				wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo  + "||"
+				wPaperToReturn = wPaperToReturn + "false"
+			}else{
+				wPaperToReturn = wPaperToReturn + "" + "||"
+				wPaperToReturn = wPaperToReturn + "true"
+			}
 		}
 	}else if departmentUserName == _department2UserName &&
 	departmentPassword == _department2Password{
@@ -333,15 +335,17 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn = wPaper.ID + "||"
-		wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
-		
-		if wPaper.ID == willID && wPaper.IsLocked == false{
-			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
-			wPaperToReturn = wPaperToReturn + "false"
-		}else{
-			wPaperToReturn = wPaperToReturn + "" + "||"
-			wPaperToReturn = wPaperToReturn + "true"
+		if wPaper.ID == willID {
+			wPaperToReturn = wPaper.ID + "||"
+			wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
+
+			if wPaper.ID == willID && wPaper.IsLocked == false{
+				wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
+				wPaperToReturn = wPaperToReturn + "false"
+			}else{
+				wPaperToReturn = wPaperToReturn + "" + "||"
+				wPaperToReturn = wPaperToReturn + "true"
+			}
 		}
 	}else {
 		wPaperToReturn = "Invalid Username or Password"
