@@ -323,6 +323,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo  + "||"
 			wPaperToReturn = wPaperToReturn + "false"
 		}else{
+			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
 			wPaperToReturn = wPaperToReturn + "true"
 		}
 	}else if departmentUserName == _department2UserName &&
@@ -339,6 +340,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
 			wPaperToReturn = wPaperToReturn + "false"
 		}else{
+			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
 			wPaperToReturn = wPaperToReturn + "true"
 		}
 	}else {
