@@ -311,7 +311,7 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 	
 	if departmentUserName == _departmentUserName &&
 	departmentPassword == _departmentPassword {
-		valAsbytes, err = stub.GetState(_depatmentBlockID)
+		valAsbytes, err := stub.GetState(_depatmentBlockID)
 		err = json.Unmarshal(valAsbytes, &wPaper)
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
