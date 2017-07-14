@@ -316,11 +316,11 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn = "WillPaperID: " + wPaper.ID + " || "
-		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo + " || "
+		wPaperToReturn = wPaper.ID + "||"
+		wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
-			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
+			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo 
 		}
 	}else if departmentUserName == _department2UserName &&
 	departmentPassword == _department2Password{
@@ -329,11 +329,11 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		if err != nil{
 			return nil, errors.New("Exception have been occured")
 		}
-		wPaperToReturn = "WillPaperID: " + wPaper.ID + " || "
-		wPaperToReturn = wPaperToReturn + "VisibileIformantion: " +wPaper.VisibleInfo + " || "
+		wPaperToReturn = wPaper.ID + "||"
+		wPaperToReturn = wPaperToReturn +wPaper.VisibleInfo + "||"
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
-			wPaperToReturn = wPaperToReturn + "HiddenInformation:" + wPaper.HiddenInfo 
+			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo 
 		}
 	}else {
 		wPaperToReturn = "Invalid Username or Password"
