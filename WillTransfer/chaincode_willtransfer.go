@@ -321,8 +321,10 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo  + "||"
+			wPaperToReturn = wPaperToReturn + "false"
+		}else{
+			wPaperToReturn = wPaperToReturn + "true"
 		}
-		wPaperToReturn = wPaperToReturn + wPaper.IsLocked
 	}else if departmentUserName == _department2UserName &&
 	departmentPassword == _department2Password{
 		valAsbytes, err := stub.GetState(_depatment2BlockID)
@@ -335,8 +337,10 @@ func (t *SimpleChaincode) ViewWillInfoByProperty(stub shim.ChaincodeStubInterfac
 		
 		if wPaper.ID == willID && wPaper.IsLocked == false{
 			wPaperToReturn = wPaperToReturn + wPaper.HiddenInfo + "||"
+			wPaperToReturn = wPaperToReturn + "false"
+		}else{
+			wPaperToReturn = wPaperToReturn + "true"
 		}
-		wPaperToReturn = wPaperToReturn + wPaper.IsLocked
 	}else {
 		wPaperToReturn = "Invalid Username or Password"
 	}
